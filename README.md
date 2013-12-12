@@ -9,3 +9,5 @@ The purpose of this project is to create
 ### References
 
 * [Linux Device Drivers, ISBN 1-56592-292-1](http://lwn.net/Kernel/LDD3/)
+* [ADI GPIO](http://blackfin.uclinux.org/doku.php?id=gpio)
+* [ADI GPIO-SYSFS](http://blackfin.uclinux.org/doku.php?id=linux-kernel:drivers:gpio-sysfs)
