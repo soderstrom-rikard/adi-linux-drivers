@@ -69,7 +69,7 @@ endif
 ```bash
    root> insmod hello.ko
    root> lsmod | grep hello
-   root> infomod hello.ko
+   root> modinfo hello.ko
    root> rmmod hello.ko
 ````
 
