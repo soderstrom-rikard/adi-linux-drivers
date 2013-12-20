@@ -1,4 +1,4 @@
-### Using the GPIO driver
+### Hello world linux driver
 
 In this first tutorial about linux drivers I will simply present a hello world module.
 
