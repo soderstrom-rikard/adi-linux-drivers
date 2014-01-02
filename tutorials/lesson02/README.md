@@ -1,6 +1,7 @@
-### Using the GPIO driver
+### Enabling and Disabling Interrupts
 
 In this tutorial about linux drivers, I will show how to disable/enable interrupts.
+All of them..
 
 ##### Disabling Interrupts
 
