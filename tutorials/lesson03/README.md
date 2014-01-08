@@ -69,7 +69,8 @@ static struct file_operations pugs_fops =
 
 ```
 
-###### Creating the device and filesystem node
+##### Creating the device and filesystem node
+
 
 The following code snipped demonstrates how to create a character device driver, and populating /dev with a device node.
 ```C++
