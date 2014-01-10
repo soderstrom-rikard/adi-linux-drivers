@@ -47,11 +47,11 @@ static void __exit gpio_blink_exit(void) /* Destructor */
 Now when we own the resource we are free to modify its direction and value. This can be accomplished by the follwing functions. 
 
 ```C++
-int gpio_direction_input(unsigned gpio);
-int gpio_direction_output(unsigned gpio, int value);
+int  gpio_direction_input(unsigned gpio);
+int  gpio_direction_output(unsigned gpio, int value);
  
 void gpio_set_value(unsigned gpio, int value);
-int gpio_get_value(unsigned gpio);
+int  gpio_get_value(unsigned gpio);
 ```
 
 The following is a complete code example of how to make LED 1 blink on load/unloading a driver.
