@@ -13,7 +13,7 @@ This checking is done **Linux GPIO Framework**, accessible to us in
 
 And specifically through the functions
 ```C++
-  int gpio_request(unsigned int gpio, const char *label);
+  int  gpio_request(unsigned int gpio, const char *label);
   void gpio_free(unsigned gpio);
 ```
 
@@ -109,15 +109,15 @@ MODULE_DESCRIPTION("Turns off LED 1 on load and turns it back on, when unloaded"
 
 All in all these are the most useful functions for gpio allocation/modification and verification.
 ```C++
-int gpio_is_valid(int number);
+int  gpio_is_valid(int number);
  
-int gpio_request(unsigned gpio, const char *label);
+int  gpio_request(unsigned gpio, const char *label);
 void gpio_free(unsigned gpio);
  
-int gpio_direction_input(unsigned gpio);
-int gpio_direction_output(unsigned gpio, int value);
+int  gpio_direction_input(unsigned gpio);
+int  gpio_direction_output(unsigned gpio, int value);
  
 void gpio_set_value(unsigned gpio, int value);
-int gpio_get_value(unsigned gpio);
+int  gpio_get_value(unsigned gpio);
 ```
 
