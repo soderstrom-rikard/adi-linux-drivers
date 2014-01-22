@@ -6,7 +6,6 @@ But as long as you are sure that you and only you will ever in all eternity use 
 
 I am using Blackfin BF52x family, thus I look at [Processor Hardware Specification](http://www.analog.com/static/imported-files/processor_manuals/BF52xProcHWR031.pdf).
 
-
 ##### Modifying GPIOs
 
 
