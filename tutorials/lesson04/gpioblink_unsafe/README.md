@@ -1,123 +1,37 @@
-### GPIO Drivers
+### GPIO Blinking - The unsafe way
 
-In this tutorial I will take about how to access the gpio pins. To my help I had [Blackfin GPIO drivers](http://www.blackfin.uclinux.org/doku-php?id=gpio).
+Accessing the hardware directly is quite simple and its just a matter of knowing your hardware.
+The part that makes this approach unsafe is that is skips all the resource allocation etc (meaning if some other driver uses your pin it might have very unexpected behavior).
+But as long as you are sure that you and only you will ever in all eternity use that pin, then maybe it is okay to do this..
+
+I am using Blackfin BF52x family, thus I look at [Processor Hardware Specification](http://www.analog.com/static/imported-files/processor_manuals/BF52xProcHWR031.pdf).
 
 
-##### GPIO Allocation
+##### Modifying GPIOs
 
-For all linux drivers, you need to have resource management. In this case we need to know if a pin is in use by some other driver or not.
-This checking is done **Linux GPIO Framework**, accessible to us in
-```C++
-  #include <asm/gpio.h>
+
+In order to select or deselect a pin as input/output you need to change its DIR register.
+```
+  Ref. Manual Chapter 8-30
+  PORTxIO_DIR
+  |Px15|Px14|...|Px0|   16-bit register
+  For all bits, 0 - Input, 1 - Output
+
+  Example:
+  Port F, Pin 8, Set as output
+  PORTFIO_DIR |= 0x0100
 ```
 
-And specifically through the functions
-```C++
-  int gpio_request(unsigned int gpio, const char *label);
-  void gpio_free(unsigned gpio);
+When the pin is an output pin, to change its value, you need to modify its SET register.
+```
+  Ref. Manual Chapter 8-30
+  PORTxIO_SET
+  |Px15|Px14|...|Px0|   16-bit register
+  For all bits, 0 - Clear, 1 - Set
+
+  Example:
+  Port F, Pin 8, Clear
+  PORTFIO_SET &= 0xFEFF
 ```
 
-The gpio index should always be retrieved from the machine specific gpio header `arch/blackfin/mach-bf527/include/mach/gpio.h`, while the label can be any text of your choice, the label is used by the gpio request service to tell the user who is using the pin. So it should be considered as an unique identifier.
-
-
-The following code requests the pin connected to the onboard LED 1 when module is loaded, and releases it when module is removed.
-```C++
-static int __init gpio_blink_init(void) /* Constructor */
-{
-  int ret;
-
-  ret = gpio_request(GPIO_PF8, "LED 1");
-  if (ret) {
-    printk(KERN_WARNING "gpio_blink: request denied on GPIO_PF8\n");
-    return ret;
-  }
-
-  return 0;
-}
-
-static void __exit gpio_blink_exit(void) /* Destructor */
-{
-  gpio_free(GPIO_PF8);
-  printk(KERN_INFO "gpio_blink unregistered\n");
-}
-```
-
-##### GPIO Modifiers
-
-Now when we own the resource we are free to modify its direction and value. This can be accomplished by the follwing functions. 
-
-```C++
-int gpio_direction_input(unsigned gpio);
-int gpio_direction_output(unsigned gpio, int value);
- 
-void gpio_set_value(unsigned gpio, int value);
-int gpio_get_value(unsigned gpio);
-```
-
-The following is a complete code example of how to make LED 1 blink on load/unloading a driver.
-```C++
-#include <linux/module.h>
-#include <linux/version.h>
-#include <linux/kernel.h>
-#include <asm/gpio.h>
-
-static int __init gpio_blink_init(void) /* Constructor */
-{
-  int ret;
-  printk(KERN_INFO "gpio_blink registered %d \n", GPIO_PF8);
-
-  ret = gpio_request(GPIO_PF8, "LED 1");
-  if (ret) {
-    printk(KERN_WARNING "gpio_blink: request denied on GPIO_PF8\n");
-    return ret;
-  }
-
-  ret = gpio_direction_output(GPIO_PF8, 1);
-  if (ret) {
-    printk(KERN_WARNING "gpio_blink: unable to set GPIO_PF8 direction to output\n");
-    return ret;
-  }
-
-  gpio_set_value(GPIO_PF8, 0);
-
-  return 0;
-}
-
-static void __exit gpio_blink_exit(void) /* Destructor */
-{
-  int ret;
-
-  gpio_set_value(GPIO_PF8, 1);
-
-  ret = gpio_direction_input(GPIO_PF8);
-  if (ret) {
-    printk(KERN_WARNING "gpio_blink: unable to set GPIO_PF8 direction to input\n");
-  }
-
-  gpio_free(GPIO_PF8);
-  printk(KERN_INFO "gpio_blink unregistered\n");
-}
-
-module_init(gpio_blink_init);
-module_exit(gpio_blink_exit);
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Rikard Söderström <YOUR_EMAIL>");
-MODULE_DESCRIPTION("Turns off LED 1 on load and turns it back on, when unloaded");
-```
-
-##### GPIO Function reference
-
-All in all these are the most useful functions for gpio allocation/modification and verification.
-```C++
-int gpio_is_valid(int number);
- 
-int gpio_request(unsigned gpio, const char *label);
-void gpio_free(unsigned gpio);
- 
-int gpio_direction_input(unsigned gpio);
-int gpio_direction_output(unsigned gpio, int value);
- 
-void gpio_set_value(unsigned gpio, int value);
-int gpio_get_value(unsigned gpio);
-```
-
+The port register definitions can be found in **linux-kernel/arch/blackfin/mach-bf527/include/mach/defBF527.h**, basically they tell you at wich address a specific register is.

@@ -1,61 +1,24 @@
 #include <linux/module.h>
 #include <linux/version.h>
 #include <linux/kernel.h>
-#include <asm/gpio.h>
 #include <mach/defBF527.h>
-
 
 static int __init gpio_blink_init(void) /* Constructor */
 {
-#if 0
-  int ret;
-
-  printk(KERN_INFO "gpio_blink registered %d \n", GPIO_PF8);
-  printk(KERN_INFO "Port F I/O adress: %d \n", PORTFIO);
-
-  ret = gpio_request(GPIO_PF8, "LED 1");
-  if (ret) {
-    printk(KERN_WARNING "gpio_blink: request denied on GPIO_PF8\n");
-    return ret;
-  }
-
-  ret = gpio_direction_output(GPIO_PF8, 1);
-  if (ret) {
-    printk(KERN_WARNING "gpio_blink: unable to set GPIO_PF8 direction to output\n");
-    return ret;
-  }
-
-  gpio_set_value(GPIO_PF8, 0);
-#else
   // Turn off LED 1
   short *direction = (short *)PORTFIO_DIR;
   short *set       = (short *)PORTFIO_SET;
   *direction |= 0x0100;
   *set &= 0xFEFF;
-#endif
 
   return 0;
 }
 
 static void __exit gpio_blink_exit(void) /* Destructor */
 {
-#if 0
-  int ret;
-
-  gpio_set_value(GPIO_PF8, 1);
-
-  ret = gpio_direction_input(GPIO_PF8);
-  if (ret) {
-    printk(KERN_WARNING "gpio_blink: unable to set GPIO_PF8 direction to input\n");
-  }
-
-  gpio_free(GPIO_PF8);
-  printk(KERN_INFO "gpio_blink unregistered\n");
-#else
   // Turn on LED 1
   short *direction = (short *)PORTFIO_DIR;
   *direction &= 0xFEFF;
-#endif
 }
 
 module_init(gpio_blink_init);

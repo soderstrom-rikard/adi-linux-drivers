@@ -2,12 +2,9 @@
 #include <linux/version.h>
 #include <linux/kernel.h>
 #include <asm/gpio.h>
-#include <mach/defBF527.h>
-
 
 static int __init gpio_blink_init(void) /* Constructor */
 {
-#if 0
   int ret;
 
   printk(KERN_INFO "gpio_blink registered %d \n", GPIO_PF8);
@@ -26,20 +23,12 @@ static int __init gpio_blink_init(void) /* Constructor */
   }
 
   gpio_set_value(GPIO_PF8, 0);
-#else
-  // Turn off LED 1
-  short *direction = (short *)PORTFIO_DIR;
-  short *set       = (short *)PORTFIO_SET;
-  *direction |= 0x0100;
-  *set &= 0xFEFF;
-#endif
 
   return 0;
 }
 
 static void __exit gpio_blink_exit(void) /* Destructor */
 {
-#if 0
   int ret;
 
   gpio_set_value(GPIO_PF8, 1);
@@ -51,11 +40,6 @@ static void __exit gpio_blink_exit(void) /* Destructor */
 
   gpio_free(GPIO_PF8);
   printk(KERN_INFO "gpio_blink unregistered\n");
-#else
-  // Turn on LED 1
-  short *direction = (short *)PORTFIO_DIR;
-  *direction &= 0xFEFF;
-#endif
 }
 
 module_init(gpio_blink_init);
